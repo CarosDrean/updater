@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/CarosDrean/updater/constants"
+	"github.com/CarosDrean/updater/models"
+	"github.com/CarosDrean/updater/utils"
 	"io"
 	"io/ioutil"
 	"log"
@@ -9,25 +11,37 @@ import (
 	"strings"
 )
 
+var config models.Configuration
+
 func main(){
 	log.Println("Actualizando Sigesoft...")
+	config = getConfig()
 	err := deleteDir()
 	if err != nil {
 		log.Println(err)
 	} else {
-		updater(constants.RouteFolderUpdate)
+		updater(config.RouteTo)
 	}
 	log.Println("¡Actualizado con exito!")
 }
 
+func getConfig() models.Configuration{
+	config, err := utils.GetConfiguration()
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return config
+}
+
 func deleteDir() error {
 	log.Println("Eliminando archivos antiguos...")
-	err := os.RemoveAll(constants.RouteFolderDelete)
+	err := os.RemoveAll(config.RouteFrom)
 	return err
 }
 
 func createFolder() {
-	err := os.MkdirAll(constants.RouteFolderDelete, 0777)
+	err := os.MkdirAll(config.RouteFrom, 0777)
 	if err != nil {
 		log.Println(err)
 	}
@@ -42,8 +56,8 @@ func updater(route string) {
 	}
 
 	for _, file := range files{
-		if len(getSubRoute(constants.RouteFolderUpdate, route)) > 2 {
-			err = os.MkdirAll(constants.RouteFolderDelete+getSubRoute(constants.RouteFolderUpdate, route), 0777)
+		if len(getSubRoute(config.RouteTo, route)) > 2 {
+			err = os.MkdirAll(config.RouteFrom+getSubRoute(config.RouteTo, route), 0777)
 			checkErr(err)
 		}
 
@@ -57,7 +71,7 @@ func updater(route string) {
 		} else {
 			copyFile(
 				file.Name(),
-				constants.RouteFolderUpdate + getSubRoute(constants.RouteFolderUpdate, route),
+				config.RouteTo + getSubRoute(config.RouteTo, route),
 				constants.RouteFolderDelete + getSubRoute(constants.RouteFolderUpdate, route),
 			)
 		}
