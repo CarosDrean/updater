@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"strings"
 )
 
 var config models.Configuration
@@ -79,7 +78,8 @@ func updater(route string) {
 }
 
 func getSubRoute(route string, subRoute string) string {
-	return "\\" + strings.TrimLeft(subRoute, route)
+	runer := []rune(subRoute)
+	return string(runer[len(route):])
 }
 
 func copyFile(name string, routeTo string, routeFrom string) {
@@ -100,6 +100,7 @@ func copyFile(name string, routeTo string, routeFrom string) {
 
 func checkErr(err error){
 	if err != nil {
+		log.Println("Error.....................")
 		log.Println(err)
 	}
 }
