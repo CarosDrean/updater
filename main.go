@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/CarosDrean/updater/constants"
+	"fmt"
 	"github.com/CarosDrean/updater/models"
 	"github.com/CarosDrean/updater/utils"
 	"io"
@@ -11,25 +11,29 @@ import (
 )
 
 var config models.Configuration
+var errVerifier = false
 
 func main(){
 	log.Println("Actualizando Sigesoft...")
 	config = getConfig()
 	err := deleteDir()
 	if err != nil {
-		log.Println(err)
+		checkErr(err)
 	} else {
 		updater(config.RouteTo)
 	}
-	log.Println("¡Actualizado con exito!")
+	if errVerifier {
+		log.Println("¡Hubo un error!")
+	} else {
+		log.Println("¡Actualizado con exito!")
+	}
+	log.Println("Presione enter para salir...")
+	_, _ = fmt.Scanln()
 }
 
 func getConfig() models.Configuration{
 	config, err := utils.GetConfiguration()
-
-	if err != nil {
-		log.Fatalln(err)
-	}
+	checkErr(err)
 	return config
 }
 
@@ -47,7 +51,6 @@ func createFolder() {
 }
 
 func updater(route string) {
-	log.Println("Copiando los nuevos archivos...")
 	createFolder()
 	files, err := ioutil.ReadDir(route)
 	if err != nil {
@@ -71,7 +74,7 @@ func updater(route string) {
 			copyFile(
 				file.Name(),
 				config.RouteTo + getSubRoute(config.RouteTo, route),
-				constants.RouteFolderDelete + getSubRoute(constants.RouteFolderUpdate, route),
+				config.RouteFrom + getSubRoute(config.RouteTo, route),
 			)
 		}
 	}
@@ -83,6 +86,7 @@ func getSubRoute(route string, subRoute string) string {
 }
 
 func copyFile(name string, routeTo string, routeFrom string) {
+	log.Println("Copiando: " + routeTo + "\\" + name + " en " + routeFrom + "\\" + name)
 	srcFile, err := os.Open(routeTo + "\\" + name)
 	checkErr(err)
 	defer srcFile.Close()
@@ -100,6 +104,7 @@ func copyFile(name string, routeTo string, routeFrom string) {
 
 func checkErr(err error){
 	if err != nil {
+		errVerifier = true
 		log.Println("Error.....................")
 		log.Println(err)
 	}
