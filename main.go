@@ -14,7 +14,7 @@ var config models.Configuration
 var errVerifier = false
 
 func main(){
-	log.Println("Actualizando Sigesoft...")
+	fmt.Println("Actualizando Sigesoft...")
 	config = getConfig()
 	err := deleteDir()
 	if err != nil {
@@ -25,9 +25,10 @@ func main(){
 	if errVerifier {
 		log.Println("¡Hubo un error!")
 	} else {
-		log.Println("¡Actualizado con exito!")
+		fmt.Println("¡Actualizado con exito!")
 	}
-	log.Println("Presione enter para salir...")
+	fmt.Println()
+	fmt.Println("Presione ENTER para salir...")
 	_, _ = fmt.Scanln()
 }
 
@@ -38,7 +39,7 @@ func getConfig() models.Configuration{
 }
 
 func deleteDir() error {
-	log.Println("Eliminando archivos antiguos...")
+	fmt.Println("Eliminando archivos antiguos...")
 	err := os.RemoveAll(config.RouteFrom)
 	return err
 }
@@ -86,7 +87,7 @@ func getSubRoute(route string, subRoute string) string {
 }
 
 func copyFile(name string, routeTo string, routeFrom string) {
-	log.Println("Copiando: " + routeTo + "\\" + name + " en " + routeFrom + "\\" + name)
+	fmt.Println("Copiando: " + routeTo + "\\" + name + " en " + routeFrom + "\\" + name)
 	srcFile, err := os.Open(routeTo + "\\" + name)
 	checkErr(err)
 	defer srcFile.Close()
