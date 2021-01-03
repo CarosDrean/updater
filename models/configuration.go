@@ -1,6 +1,6 @@
 package models
 
 type Configuration struct {
-	RouteFrom string
-	RouteTo   string
+	RouteFrom string `json:"routeFrom"`
+	RouteTo   string `json:"routeTo"`
 }

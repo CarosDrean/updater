@@ -13,34 +13,39 @@ import (
 )
 
 var (
+	errMain     error
 	config      models.Configuration
-	errVerifier = false
 	red         = color.FgRed.Render
 	green       = color.FgGreen.Render
+	blue        = color.FgLightBlue.Render
 )
 
 func main() {
 	err := work()
 	if err != nil {
 		log.Println(red(constants.FinishError))
+		log.Println(red(errMain))
+	} else {
+		fmt.Println(blue(constants.FinishSuccess))
 	}
-	fmt.Println(green(constants.FinishSuccess))
+
 	fmt.Println()
-	fmt.Printf("Presione %s para salir...", green("ENTER"))
+	fmt.Printf("Presione %s para salir...", blue("ENTER"))
 	_, _ = fmt.Scanln()
 }
 
 func work() error {
 	fmt.Println(green(constants.MessageInit))
+	err := deleteDir()
+	checkErr(err, "Delete Dir")
+	config, err = utils.GetConfiguration()
+	if err == nil {
+		updater(config.RouteFrom)
+	}
+	checkErr(err, "Get Configuration")
 
-	config, err := utils.GetConfiguration()
-	checkErr(err)
-	err = deleteDir()
-	checkErr(err)
-	updater(config.RouteFrom)
-
-	if errVerifier {
-		return err
+	if errMain != nil {
+		return errMain
 	}
 	return nil
 }
@@ -57,16 +62,18 @@ func createFolder(route string) error {
 }
 
 func updater(routeFrom string) {
-	err := createFolder(config.RouteTo)
-	checkErr(err)
 	files, err := ioutil.ReadDir(routeFrom)
-	checkErr(err)
-	fmt.Println(getSubRoute(config.RouteFrom, routeFrom))
+	checkErr(err, "Red Files")
+	if err != nil {
+		return
+	}
 
-	if len(getSubRoute(config.RouteFrom, routeFrom)) > 2 { // si devuelve subcarpeta
-		// esto se puede poner directamente en la primera linea de esta funcion
-		err = createFolder(config.RouteTo +getSubRoute(config.RouteFrom, routeFrom))
-		checkErr(err)
+	err = createFolder(config.RouteTo)
+	checkErr(err, "Creating Folder")
+
+	if len(getSubRoute(config.RouteFrom, routeFrom)) > 2 {
+		err = createFolder(config.RouteTo + getSubRoute(config.RouteFrom, routeFrom))
+		checkErr(err, "Creating Folder Sub")
 	}
 
 	for _, file := range files {
@@ -75,8 +82,8 @@ func updater(routeFrom string) {
 		} else {
 			copyFile(
 				file.Name(),
-				config.RouteFrom+getSubRoute(config.RouteFrom, routeFrom),
 				config.RouteTo+getSubRoute(config.RouteFrom, routeFrom),
+				config.RouteFrom+getSubRoute(config.RouteFrom, routeFrom),
 			)
 		}
 	}
@@ -89,26 +96,25 @@ func getSubRoute(route string, subRoute string) string {
 }
 
 func copyFile(name string, routeTo string, routeFrom string) {
-	fmt.Println("Writing: " + routeFrom + "\\" + name)
-	srcFile, err := os.Open(routeTo + "\\" + name)
-	checkErr(err)
+	fmt.Println("Writing: " + routeTo + "\\" + name)
+	srcFile, err := os.Open(routeFrom + "\\" + name)
+	checkErr(err, "Open File")
 	defer srcFile.Close()
 
-	destFile, err := os.Create(routeFrom + "\\" + name) // creates if file doesn't exist
-	checkErr(err)
+	destFile, err := os.Create(routeTo + "\\" + name) // creates if file doesn't exist
+	checkErr(err, "Creating File")
 	defer destFile.Close()
 
 	_, err = io.Copy(destFile, srcFile) // check first var for number of bytes copied
-	checkErr(err)
+	checkErr(err, "Copying File")
 
 	err = destFile.Sync()
-	checkErr(err)
+	checkErr(err, "Sync File")
 }
 
-func checkErr(err error) {
+func checkErr(err error, ctx string) {
 	if err != nil {
-		errVerifier = true
-		log.Println("Error.....................")
-		log.Println(err)
+		errMain = err
+		log.Println(red(ctx))
 	}
 }
