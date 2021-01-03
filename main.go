@@ -2,92 +2,94 @@ package main
 
 import (
 	"fmt"
+	"github.com/CarosDrean/updater/constants"
 	"github.com/CarosDrean/updater/models"
 	"github.com/CarosDrean/updater/utils"
+	"github.com/gookit/color"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
 )
 
-var config models.Configuration
-var errVerifier = false
+var (
+	config      models.Configuration
+	errVerifier = false
+	red         = color.FgRed.Render
+	green       = color.FgGreen.Render
+)
 
-func main(){
-	fmt.Println("Actualizando Sigesoft...")
-	config = getConfig()
-	err := deleteDir()
+func main() {
+	err := work()
 	if err != nil {
-		checkErr(err)
-	} else {
-		updater(config.RouteTo)
+		log.Println(red(constants.FinishError))
 	}
-	if errVerifier {
-		log.Println("¡Hubo un error!")
-	} else {
-		fmt.Println("¡Actualizado con exito!")
-	}
+	fmt.Println(green(constants.FinishSuccess))
 	fmt.Println()
-	fmt.Println("Presione ENTER para salir...")
+	fmt.Printf("Presione %s para salir...", green("ENTER"))
 	_, _ = fmt.Scanln()
 }
 
-func getConfig() models.Configuration{
+func work() error {
+	fmt.Println(green(constants.MessageInit))
+
 	config, err := utils.GetConfiguration()
 	checkErr(err)
-	return config
+	err = deleteDir()
+	checkErr(err)
+	updater(config.RouteFrom)
+
+	if errVerifier {
+		return err
+	}
+	return nil
 }
 
 func deleteDir() error {
-	fmt.Println("Eliminando archivos antiguos...")
-	err := os.RemoveAll(config.RouteFrom)
+	fmt.Println(constants.DeleteDirOld)
+	err := os.RemoveAll(config.RouteTo)
 	return err
 }
 
-func createFolder() {
-	err := os.MkdirAll(config.RouteFrom, 0777)
-	if err != nil {
-		log.Println(err)
-	}
+func createFolder(route string) error {
+	err := os.MkdirAll(route, 0777)
+	return err
 }
 
-func updater(route string) {
-	createFolder()
-	files, err := ioutil.ReadDir(route)
-	if err != nil {
-		log.Println(err)
+func updater(routeFrom string) {
+	err := createFolder(config.RouteTo)
+	checkErr(err)
+	files, err := ioutil.ReadDir(routeFrom)
+	checkErr(err)
+	fmt.Println(getSubRoute(config.RouteFrom, routeFrom))
+
+	if len(getSubRoute(config.RouteFrom, routeFrom)) > 2 { // si devuelve subcarpeta
+		// esto se puede poner directamente en la primera linea de esta funcion
+		err = createFolder(config.RouteTo +getSubRoute(config.RouteFrom, routeFrom))
+		checkErr(err)
 	}
 
-	for _, file := range files{
-		if len(getSubRoute(config.RouteTo, route)) > 2 {
-			err = os.MkdirAll(config.RouteFrom+getSubRoute(config.RouteTo, route), 0777)
-			checkErr(err)
-		}
-
-		// fmt.Println("Nombre:", file.Name())
-		// fmt.Println("Tamaño:", file.Size())
-		// fmt.Println("Modo:", file.Mode())
-		// fmt.Println("Ultima modificación:", file.ModTime())
-		//  fmt.Println("Es directorio?:", file.IsDir())
+	for _, file := range files {
 		if file.IsDir() {
-			updater(route + "\\" + file.Name())
+			updater(routeFrom + "\\" + file.Name())
 		} else {
 			copyFile(
 				file.Name(),
-				config.RouteTo + getSubRoute(config.RouteTo, route),
-				config.RouteFrom + getSubRoute(config.RouteTo, route),
+				config.RouteFrom+getSubRoute(config.RouteFrom, routeFrom),
+				config.RouteTo+getSubRoute(config.RouteFrom, routeFrom),
 			)
 		}
 	}
 }
 
+// obtiene el nombre de las subcarpetas
 func getSubRoute(route string, subRoute string) string {
-	runer := []rune(subRoute)
-	return string(runer[len(route):])
+	sub := []rune(subRoute)
+	return string(sub[len(route):])
 }
 
 func copyFile(name string, routeTo string, routeFrom string) {
-	fmt.Println("Copiando: " + routeTo + "\\" + name + " en " + routeFrom + "\\" + name)
+	fmt.Println("Writing: " + routeFrom + "\\" + name)
 	srcFile, err := os.Open(routeTo + "\\" + name)
 	checkErr(err)
 	defer srcFile.Close()
@@ -103,7 +105,7 @@ func copyFile(name string, routeTo string, routeFrom string) {
 	checkErr(err)
 }
 
-func checkErr(err error){
+func checkErr(err error) {
 	if err != nil {
 		errVerifier = true
 		log.Println("Error.....................")
