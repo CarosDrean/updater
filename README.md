@@ -13,10 +13,10 @@ go get
 Las configuraciones de los mensajes se encuentran en **constants.go**
 
 ```
-    MessageInit   = "Actualizando Sigesoft..."
-	FinishError   = "¡Hubo un error!"
-	FinishSuccess = "¡Actualizado con exito!"
-	DeleteDirOld  = "Eliminando archivos antiguos..."
+MessageInit   = "Actualizando Sigesoft..."
+FinishError   = "¡Hubo un error!"
+FinishSuccess = "¡Actualizado con exito!"
+DeleteDirOld  = "Eliminando archivos antiguos..."
 ```
 
 Para cambiar el origen y el destino, lo debe hacer en **configuration.json**
@@ -27,3 +27,13 @@ Para cambiar el origen y el destino, lo debe hacer en **configuration.json**
   "routeTo": "C:\\drean\\sigesoft"
 }
 ```
+
+# Compilacion
+
+Compilar el proyecto
+
+```
+go build
+```
+Lo cual generara un instalador que es el que puede compartir.
+* Debera acompañar el instaladore con el archivo configuration.json
