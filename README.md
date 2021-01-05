@@ -30,10 +30,9 @@ Para cambiar el origen y el destino, lo debe hacer en **configuration.json**
 
 # Compilacion
 
-Compilar el proyecto
+Para compilar el proyecto use:
 
 ```
 go build
 ```
-Lo cual generara un instalador que es el que puede compartir.
 Debera acompañar el instaladore con el archivo **configuration.json**
