@@ -36,4 +36,4 @@ Compilar el proyecto
 go build
 ```
 Lo cual generara un instalador que es el que puede compartir.
-* Debera acompañar el instaladore con el archivo configuration.json
+Debera acompañar el instaladore con el archivo **configuration.json**
