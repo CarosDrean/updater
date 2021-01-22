@@ -13,15 +13,15 @@ import (
 )
 
 var (
-	errMain     error
-	config      models.Configuration
-	red         = color.FgRed.Render
-	green       = color.FgGreen.Render
-	blue        = color.FgLightBlue.Render
+	errMain error
+	routes  models.Routes
+	red     = color.FgRed.Render
+	green   = color.FgGreen.Render
+	blue    = color.FgLightBlue.Render
 )
 
 func main() {
-	err := work()
+	err := options()
 	if err != nil {
 		log.Println(red(constants.FinishError))
 		log.Println(red(errMain))
@@ -34,15 +34,27 @@ func main() {
 	_, _ = fmt.Scanln()
 }
 
-func work() error {
+func work(option string) error {
 	fmt.Println(green(constants.MessageInit))
 	err := deleteDir()
 	checkErr(err, "Delete Dir")
-	config, err = utils.GetConfiguration()
-	if err == nil {
-		updater(config.RouteFrom)
-	}
+	config, err := utils.GetConfiguration()
 	checkErr(err, "Get Configuration")
+
+	routes = models.Routes{
+		RouteFrom: config.RouteFrom,
+		RouteTo:   config.RouteTo,
+	}
+	if option == "2" {
+		routes = models.Routes{
+			RouteFrom: config.RouteFrom2,
+			RouteTo:   config.RouteTo2,
+		}
+	}
+	if err == nil {
+		updater(routes.RouteFrom)
+	}
+
 
 	if errMain != nil {
 		return errMain
@@ -50,9 +62,34 @@ func work() error {
 	return nil
 }
 
+func options() error {
+	fmt.Println(fmt.Sprintf("===============%s===============", blue("OPCIONES")))
+	fmt.Println("1.- Actualizar Sigesoft")
+	fmt.Println("2.- Actualizar Sigesoft Particular")
+	fmt.Println(fmt.Sprintf("* Ingrese la %s deseada y presione %s", blue("OPCION"), blue("ENTER")))
+	var option string
+	_, _ = fmt.Scanln(&option)
+	if option == "1" || option == "2" {
+		err := work(option)
+		if err != nil {
+			return err
+		}
+		fmt.Println("hey!")
+		fmt.Println(option)
+	} else {
+		fmt.Println("------------------------------")
+		fmt.Println(red("¡Opcion no valida!"))
+		err := options()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func deleteDir() error {
 	fmt.Println(constants.DeleteDirOld)
-	err := os.RemoveAll(config.RouteTo)
+	err := os.RemoveAll(routes.RouteTo)
 	return err
 }
 
@@ -68,11 +105,11 @@ func updater(routeFrom string) {
 		return
 	}
 
-	err = createFolder(config.RouteTo)
+	err = createFolder(routes.RouteTo)
 	checkErr(err, "Creating Folder")
 
-	if len(getSubRoute(config.RouteFrom, routeFrom)) > 2 {
-		err = createFolder(config.RouteTo + getSubRoute(config.RouteFrom, routeFrom))
+	if len(getSubRoute(routes.RouteFrom, routeFrom)) > 2 {
+		err = createFolder(routes.RouteTo + getSubRoute(routes.RouteFrom, routeFrom))
 		checkErr(err, "Creating Folder Sub")
 	}
 
@@ -82,8 +119,8 @@ func updater(routeFrom string) {
 		} else {
 			copyFile(
 				file.Name(),
-				config.RouteTo+getSubRoute(config.RouteFrom, routeFrom),
-				config.RouteFrom+getSubRoute(config.RouteFrom, routeFrom),
+				routes.RouteTo+getSubRoute(routes.RouteFrom, routeFrom),
+				routes.RouteFrom+getSubRoute(routes.RouteFrom, routeFrom),
 			)
 		}
 	}
