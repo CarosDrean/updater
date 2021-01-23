@@ -26,7 +26,7 @@ func main() {
 		log.Println(red(constants.FinishError))
 		log.Println(red(errMain))
 	} else {
-		fmt.Println(blue(constants.FinishSuccess))
+		fmt.Println(blue(fmt.Sprintf(constants.FinishSuccess, routes.NameApp)))
 	}
 
 	fmt.Println()
@@ -35,26 +35,28 @@ func main() {
 }
 
 func work(option string) error {
-	fmt.Println(green(constants.MessageInit))
-	err := deleteDir()
-	checkErr(err, "Delete Dir")
 	config, err := utils.GetConfiguration()
 	checkErr(err, "Get Configuration")
 
 	routes = models.Routes{
 		RouteFrom: config.RouteFrom,
 		RouteTo:   config.RouteTo,
+		NameApp:   config.NameApp,
 	}
 	if option == "2" {
 		routes = models.Routes{
 			RouteFrom: config.RouteFrom2,
 			RouteTo:   config.RouteTo2,
+			NameApp:   config.NameApp2,
 		}
 	}
+	fmt.Println(green(fmt.Sprintf(constants.MessageInit, routes.NameApp)))
+	err = deleteDir()
+	checkErr(err, "Delete Dir")
+
 	if err == nil {
 		updater(routes.RouteFrom)
 	}
-
 
 	if errMain != nil {
 		return errMain
@@ -74,8 +76,6 @@ func options() error {
 		if err != nil {
 			return err
 		}
-		fmt.Println("hey!")
-		fmt.Println(option)
 	} else {
 		fmt.Println("------------------------------")
 		fmt.Println(red("¡Opcion no valida!"))
@@ -133,7 +133,7 @@ func getSubRoute(route string, subRoute string) string {
 }
 
 func copyFile(name string, routeTo string, routeFrom string) {
-	fmt.Println("Writing: " + routeTo + "\\" + name)
+	fmt.Println(fmt.Sprintf("%s: %s\\%s", green("Writing"), routeTo, name))
 	srcFile, err := os.Open(routeFrom + "\\" + name)
 	checkErr(err, "Open File")
 	defer srcFile.Close()

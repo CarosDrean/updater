@@ -1,8 +1,8 @@
 package constants
 
 const (
-	MessageInit   = "Actualizando Sigesoft..."
+	MessageInit   = "Actualizando %s..."
 	FinishError   = "¡Hubo un error!"
-	FinishSuccess = "¡Actualizado con exito!"
+	FinishSuccess = "¡%s Actualizado con Exito!"
 	DeleteDirOld  = "Eliminando archivos antiguos..."
 )
