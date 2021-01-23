@@ -68,9 +68,14 @@ func options() error {
 	fmt.Println(fmt.Sprintf("===============%s===============", blue("OPCIONES")))
 	fmt.Println("1.- Actualizar Sigesoft")
 	fmt.Println("2.- Actualizar Sigesoft Particular")
+	fmt.Println("3.- Salir")
+	fmt.Println()
 	fmt.Println(fmt.Sprintf("* Ingrese la %s deseada y presione %s", blue("OPCION"), blue("ENTER")))
 	var option string
 	_, _ = fmt.Scanln(&option)
+	if option == "3" || option == "exit" {
+		os.Exit(3)
+	}
 	if option == "1" || option == "2" {
 		err := work(option)
 		if err != nil {
