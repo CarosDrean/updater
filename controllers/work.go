@@ -11,7 +11,7 @@ import (
 )
 var (
 	ErrMain error
-	Routes  models.Routes
+	Routes  models.Config
 	red     = color.FgRed.Render
 	green   = color.FgGreen.Render
 )
@@ -38,17 +38,17 @@ func Options() error {
 	return nil
 }
 
-func getRoutesConfig(option string) models.Routes {
+func getRoutesConfig(option string) models.Config {
 	config, err := utils.GetConfiguration()
 	checkErr(err, "Get Configuration")
 
-	Routes = models.Routes{
+	Routes = models.Config{
 		RouteFrom: config.RouteFrom,
 		RouteTo:   config.RouteTo,
 		NameApp:   config.NameApp,
 	}
 	if option == "2" {
-		Routes = models.Routes{
+		Routes = models.Config{
 			RouteFrom: config.RouteFrom2,
 			RouteTo:   config.RouteTo2,
 			NameApp:   config.NameApp2,
@@ -57,7 +57,7 @@ func getRoutesConfig(option string) models.Routes {
 	return Routes
 }
 
-func work(routes models.Routes) error {
+func work(routes models.Config) error {
 	fmt.Println(green(fmt.Sprintf(constants.MessageInit, routes.NameApp)))
 	err := deleteDir()
 	checkErr(err, "Delete Dir")

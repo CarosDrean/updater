@@ -10,7 +10,12 @@ type Configuration struct {
 	NameApp2   string `json:"nameApp2"`
 }
 
-type Routes struct {
+type Configs struct {
+	Configs []Config `json:"configs"`
+}
+
+type Config struct {
+	ID        string `json:"_id"`
 	RouteFrom string `json:"routeFrom"`
 	RouteTo   string `json:"routeTo"`
 	NameApp   string `json:"nameApp"`

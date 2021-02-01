@@ -25,3 +25,23 @@ func GetConfiguration() (models.Configuration, error) {
 
 	return config, nil
 }
+
+func GetConfigs() (models.Configs, error) {
+	var configs models.Configs
+	file, err := os.Open("./config.json")
+
+	if err != nil {
+		return configs, err
+	}
+
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&configs)
+
+	if err != nil {
+		return configs, err
+	}
+
+	return configs, nil
+}
