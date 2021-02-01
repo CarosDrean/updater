@@ -23,8 +23,13 @@ Para cambiar el origen y el destino, lo debe hacer en **configuration.json**
 
 ```json
 {
-  "routeFrom": "D:\\temp",
-  "routeTo": "C:\\drean\\sigesoft"
+  "routeFrom": "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Tecnologia e Informacion\\sigesoft",
+  "routeTo": "C:\\drean\\sigesoft",
+  "nameApp": "Sigesoft",
+
+  "routeFrom2": "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Tecnologia e Informacion\\sigesoft-particular",
+  "routeTo2": "C:\\drean\\sigesoft-particular",
+  "nameApp2": "Sigesoft Particular"
 }
 ```
 
@@ -33,6 +38,6 @@ Para cambiar el origen y el destino, lo debe hacer en **configuration.json**
 Para compilar el proyecto use:
 
 ```
-go build
+go build .
 ```
-Debera acompañar el instaladore con el archivo **configuration.json**
+Debera acompañar el instalador con el archivo **configuration.json**
