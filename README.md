@@ -19,17 +19,24 @@ FinishSuccess = "¡Actualizado con exito!"
 DeleteDirOld  = "Eliminando archivos antiguos..."
 ```
 
-Para cambiar el origen y el destino, lo debe hacer en **configuration.json**
+Para cambiar el origen y el destino, lo debe hacer en **configuration.json**, puede agregar mas campos al arreglo.
 
 ```json
 {
-  "routeFrom": "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Tecnologia e Informacion\\sigesoft",
-  "routeTo": "C:\\drean\\sigesoft",
-  "nameApp": "Sigesoft",
-
-  "routeFrom2": "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Tecnologia e Informacion\\sigesoft-particular",
-  "routeTo2": "C:\\drean\\sigesoft-particular",
-  "nameApp2": "Sigesoft Particular"
+  "configs": [
+    {
+      "_id": "1",
+      "routeFrom": "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Tecnologia e Informacion\\sigesoft",
+      "routeTo": "C:\\drean\\sigesoft",
+      "nameApp": "Sigesoft"
+    },
+    {
+      "_id": "2",
+      "routeFrom": "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Tecnologia e Informacion\\sigesoft-particular",
+      "routeTo": "C:\\drean\\sigesoft-particular",
+      "nameApp": "Sigesoft Particular"
+    }
+  ]
 }
 ```
 

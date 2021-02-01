@@ -3,8 +3,7 @@ package controllers
 import (
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/CarosDrean/updater/utils"
-	"log"
+	"github.com/CarosDrean/updater/models"
 	"strconv"
 	"strings"
 )
@@ -14,18 +13,17 @@ type Option struct {
 	Text string
 }
 
-var simpleQs = []*survey.Question{
-	{
-		Name: "Option",
-		Prompt: &survey.Select{
-			Message: "SELECIONE UNA OPCION:\n",
-			Options: assemblyOptions(),
+func prompts(configs []models.Config) (string, error) {
+	simpleQs := []*survey.Question{
+		{
+			Name: "Option",
+			Prompt: &survey.Select{
+				Message: "SELECIONE UNA OPCION:\n",
+				Options: assemblyOptions(configs),
+			},
+			Validate: survey.Required,
 		},
-		Validate: survey.Required,
-	},
-}
-
-func prompts() (string, error) {
+	}
 	answers := struct {
 		Option string
 	}{}
@@ -36,42 +34,34 @@ func prompts() (string, error) {
 		fmt.Println(err.Error())
 		return "", err
 	}
-	return getOption(answers.Option), nil
+	return getOption(answers.Option, configs), nil
 }
 
-func assemblyIDs()[]string {
-	config, err := utils.GetConfigs()
-	if err != nil {
-		log.Println(err)
-	}
+func assemblyIDs(configs []models.Config)[]string {
 	options := make([]string, 0)
-	for _, e := range config.Configs {
+	for _, e := range configs {
 		options = append(options, e.ID)
 	}
-	options = append(options, strconv.Itoa(len(config.Configs) + 1))
+	options = append(options, strconv.Itoa(len(configs) + 1))
 	return options
 }
 
-func assemblyOptions()[]string {
-	config, err := utils.GetConfigs()
-	if err != nil {
-		log.Println(err)
-	}
+func assemblyOptions(configs []models.Config)[]string {
 	options := make([]string, 0)
-	for _, e := range config.Configs {
+	for _, e := range configs {
 		options = append(options, fmt.Sprintf("%s.- Actualizar %s", e.ID, e.NameApp))
 	}
-	options = append(options, fmt.Sprintf("%d.- Salir", len(config.Configs) + 1))
+	options = append(options, fmt.Sprintf("%d.- Salir", len(configs) + 1))
 	return options
 }
 
-func getOption(text string) string {
-	options := assemblyIDs()
+func getOption(text string, configs []models.Config) string {
+	options := assemblyIDs(configs)
 	for _, e := range options {
 		i := strings.Index(text, e)
 		if i != -1 {
 			return e
 		}
 	}
-	return "0"
+	return strconv.Itoa(len(configs))
 }

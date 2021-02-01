@@ -8,7 +8,9 @@ import (
 	"github.com/gookit/color"
 	"io/ioutil"
 	"os"
+	"strconv"
 )
+
 var (
 	ErrMain error
 	Routes  models.Config
@@ -17,44 +19,34 @@ var (
 )
 
 func Options() error {
-	option, err := prompts()
+	config, err := utils.GetConfigs()
 	if err != nil {
 		return err
 	}
-	if option == "3" {
+	option, err := prompts(config.Configs)
+	if err != nil {
+		return err
+	}
+
+	if option == strconv.Itoa(len(config.Configs) + 1) {
 		os.Exit(3)
 	}
-	if option == "1" || option == "2" {
-		err := work(getRoutesConfig(option))
-		if err != nil {
-			return err
-		}
-	} else {
-		err = Options()
-		if err != nil {
-			return err
-		}
+
+	err = work(findConfig(option, config.Configs))
+	if err != nil {
+		return err
 	}
 	return nil
 }
 
-func getRoutesConfig(option string) models.Config {
-	config, err := utils.GetConfiguration()
-	checkErr(err, "Get Configuration")
-
-	Routes = models.Config{
-		RouteFrom: config.RouteFrom,
-		RouteTo:   config.RouteTo,
-		NameApp:   config.NameApp,
-	}
-	if option == "2" {
-		Routes = models.Config{
-			RouteFrom: config.RouteFrom2,
-			RouteTo:   config.RouteTo2,
-			NameApp:   config.NameApp2,
+func findConfig(option string, configs []models.Config) models.Config {
+	for _, e := range configs {
+		if e.ID == option {
+			Routes = e
+			return e
 		}
 	}
-	return Routes
+	return models.Config{}
 }
 
 func work(routes models.Config) error {
