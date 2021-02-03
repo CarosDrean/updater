@@ -14,6 +14,10 @@ var (
 )
 
 func main() {
+	execute()
+}
+
+func execute() {
 	err := controllers.Options()
 	if err != nil {
 		log.Println(red(constants.FinishError))
@@ -22,9 +26,6 @@ func main() {
 	} else {
 		fmt.Println(blue(fmt.Sprintf(constants.FinishSuccess, controllers.Routes.NameApp)))
 	}
-
-	fmt.Println()
-	fmt.Printf("Presione %s para salir...", blue("ENTER"))
-	_, _ = fmt.Scanln()
+	execute()
 }
 
