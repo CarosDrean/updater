@@ -8,11 +8,6 @@ import (
 	"strings"
 )
 
-type Option struct {
-	ID   string
-	Text string
-}
-
 func prompts(configs []models.Config) (string, error) {
 	simpleQs := []*survey.Question{
 		{
@@ -35,24 +30,6 @@ func prompts(configs []models.Config) (string, error) {
 		return "", err
 	}
 	return getOption(answers.Option, configs), nil
-}
-
-func assemblyIDs(configs []models.Config)[]string {
-	options := make([]string, 0)
-	for _, e := range configs {
-		options = append(options, e.ID)
-	}
-	options = append(options, strconv.Itoa(len(configs) + 1))
-	return options
-}
-
-func assemblyOptions(configs []models.Config)[]string {
-	options := make([]string, 0)
-	for _, e := range configs {
-		options = append(options, fmt.Sprintf("%s.- Actualizar %s", e.ID, e.NameApp))
-	}
-	options = append(options, fmt.Sprintf("%d.- Salir", len(configs) + 1))
-	return options
 }
 
 func getOption(text string, configs []models.Config) string {
