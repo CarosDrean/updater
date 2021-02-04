@@ -1,4 +1,4 @@
-package controllers
+package controller
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 
 func deleteDir() error {
 	fmt.Println(constants.DeleteDirOld)
-	err := os.RemoveAll(Routes.RouteTo)
+	err := os.RemoveAll(configSelected.RouteTo)
 	return err
 }
 

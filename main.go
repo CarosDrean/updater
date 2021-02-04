@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/CarosDrean/updater/constants"
-	"github.com/CarosDrean/updater/controllers"
+	"github.com/CarosDrean/updater/controller"
 	"github.com/gookit/color"
 	"log"
 )
@@ -18,13 +18,13 @@ func main() {
 }
 
 func execute() {
-	err := controllers.Options()
+	nameApp, err := controller.Options()
 	if err != nil {
 		log.Println(red(constants.FinishError))
-		log.Println(red(controllers.ErrMain))
+		log.Println(red(controller.ErrMain))
 		log.Println(red(err))
 	} else {
-		fmt.Println(blue(fmt.Sprintf(constants.FinishSuccess, controllers.Routes.NameApp)))
+		fmt.Println(blue(fmt.Sprintf(constants.FinishSuccess, nameApp)))
 	}
 	execute()
 }
