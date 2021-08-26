@@ -1,0 +1,23 @@
+{
+  "messages": {
+    "init": "Actualizando...",
+    "delete_old": "Eliminando archivos antiguos",
+    "finish_success": "¡Actualizado con exito!",
+    "finish_error": "¡Hubo un error!",
+    "invalid_option": "¡Opcion invalida!"
+  },
+  "apps": [
+    {
+      "id": 1,
+      "route_from": "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Tecnologia e Informacion\\sigesoft",
+      "route_to": "C:\\drean\\sigesoft",
+      "name_app": "Sigesoft"
+    },
+    {
+      "id": 2,
+      "route_from": "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Tecnologia e Informacion\\sigesoft-particular",
+      "route_to": "C:\\drean\\sigesoft-particular",
+      "name_app": "Sigesoft Particular"
+    }
+  ]
+}
